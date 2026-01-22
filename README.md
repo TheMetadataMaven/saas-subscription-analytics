@@ -1,3 +1,4 @@
+
 # SaaS Subscription Analytics
 
 A complete analytics engineering project demonstrating data modeling, SQL transformations, and business intelligence for a subscription-based software company.
@@ -260,7 +261,7 @@ Screenshots and interactive demos available in `/dashboards` folder.
 
 1. **Clone this repository**
 ```bash
-git clone https://github.com/CWalters1982/saas-subscription-analytics.git
+git clone https://github.com/TheMetadataMaven/saas-subscription-analytics.git
 cd saas-subscription-analytics
 ```
 
@@ -351,6 +352,6 @@ make fresh          # Clean rebuild everything
 
 ## 📬 Contact
 
-Built by **Catrina Walters** — [LinkedIn](https://www.linkedin.com/in/catrina-walters-a6a123172) | [GitHub](https://github.com/CWalters1982)
+Built by **Catrina Walters** — [LinkedIn](https://www.linkedin.com/in/catrina-walters-a6a123172) | [GitHub](https://github.com/TheMetadataMaven)
 
 Questions or feedback? Open an issue or reach out directly.
