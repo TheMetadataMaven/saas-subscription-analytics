@@ -1,0 +1,44 @@
+# Sample dbt profile configuration
+# Copy this to ~/.dbt/profiles.yml and fill in your credentials
+# NEVER commit actual credentials to version control!
+
+default:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth  # or service-account
+      project: your-gcp-project-id
+      dataset: saas_analytics_dev
+      threads: 4
+      timeout_seconds: 300
+      location: US
+      
+      # For service account authentication, uncomment below:
+      # method: service-account
+      # keyfile: /path/to/your/keyfile.json
+      
+    prod:
+      type: bigquery
+      method: service-account
+      project: your-gcp-project-id
+      dataset: saas_analytics_prod
+      threads: 8
+      timeout_seconds: 300
+      location: US
+      keyfile: /path/to/your/keyfile.json
+
+# Alternative: Snowflake configuration
+# default:
+#   target: dev
+#   outputs:
+#     dev:
+#       type: snowflake
+#       account: your-account
+#       user: your-username
+#       password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+#       role: transformer
+#       database: ANALYTICS
+#       warehouse: TRANSFORMING
+#       schema: SAAS_ANALYTICS_DEV
+#       threads: 4

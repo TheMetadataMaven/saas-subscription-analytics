@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: int_customer_subscription_history
+    description: >
+      Complete customer subscription journey with timeline. Joins customer data 
+      with subscription events, calculates tenure at each event, and tracks 
+      plan progression over time.
+    columns:
+      - name: customer_id
+        description: Customer identifier
+        tests:
+          - not_null
+      - name: event_id
+        description: Event identifier
+        tests:
+          - unique
+          - not_null
+      - name: event_sequence
+        description: Order of event in customer's history (1 = first)
+      - name: days_since_signup
+        description: Customer tenure in days at time of event
+      - name: months_since_signup
+        description: Customer tenure in months at time of event
+      - name: is_first_paid_conversion
+        description: Flag for first transition to paid plan
+      - name: has_ever_churned
+        description: Whether customer has churned at any point
+      - name: has_ever_upgraded
+        description: Whether customer has upgraded at any point
+
+  - name: int_mrr_movements
+    description: >
+      Monthly MRR tracking with movement categorization. Calculates MRR at 
+      customer level by month and categorizes movements (new, expansion, 
+      contraction, churn, resurrection).
+    columns:
+      - name: customer_id
+        description: Customer identifier
+        tests:
+          - not_null
+      - name: month_date
+        description: First day of month
+        tests:
+          - not_null
+      - name: month_key
+        description: "Month key in YYYY-MM format"
+      - name: beginning_mrr
+        description: MRR at start of month for this customer
+      - name: ending_mrr
+        description: MRR at end of month for this customer
+      - name: net_mrr_change
+        description: Total MRR change for the month
+      - name: new_mrr
+        description: MRR if this is customer's first month
+      - name: expansion_mrr
+        description: MRR increase from upgrades
+      - name: contraction_mrr
+        description: MRR decrease from downgrades
+      - name: churned_mrr
+        description: MRR lost to churn
+      - name: movement_type
+        description: "Primary movement classification: new, expansion, contraction, churn, resurrection, unchanged"
+        tests:
+          - accepted_values:
+              values: ['new', 'expansion', 'contraction', 'churn', 'resurrection', 'unchanged']
+
+  - name: int_attribution_touchpoints
+    description: >
+      Marketing attribution analysis with multiple models. Implements first-touch, 
+      last-touch, linear, time-decay, and position-based attribution for each 
+      marketing touchpoint.
+    columns:
+      - name: touch_id
+        description: Touchpoint identifier
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Customer identifier
+      - name: channel_name
+        description: Marketing channel name
+      - name: touch_sequence
+        description: Order of touch in customer journey (1 = first)
+      - name: total_touches
+        description: Total touchpoints in customer journey
+      - name: first_touch_weight
+        description: Attribution weight under first-touch model (0 or 1)
+      - name: last_touch_weight
+        description: Attribution weight under last-touch model (0 or 1)
+      - name: linear_weight
+        description: Attribution weight under linear model (1/n)
+      - name: time_decay_weight
+        description: Attribution weight under time-decay model
+      - name: position_based_weight
+        description: Attribution weight under U-shaped model
+      - name: journey_stage
+        description: "Stage in customer journey: awareness, consideration_early, consideration_late, decision"

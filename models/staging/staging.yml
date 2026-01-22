@@ -1,0 +1,147 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Cleaned and standardized customer data
+    columns:
+      - name: customer_id
+        description: Unique identifier for each customer (PK)
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        description: Legal name of the customer's company
+      - name: industry
+        description: Industry vertical classification (uppercase, trimmed)
+      - name: company_size
+        description: Employee count range
+      - name: country
+        description: ISO 2-letter country code (uppercase)
+      - name: email
+        description: Primary contact email (lowercase, trimmed)
+      - name: acquisition_channel_id
+        description: FK to marketing_channels
+      - name: initial_plan_id
+        description: FK to plan_tiers - first plan selected
+      - name: is_trial
+        description: Whether customer started with a trial
+      - name: trial_end_date
+        description: Trial expiration date
+      - name: signed_up_at
+        description: Signup timestamp
+      - name: signup_date
+        description: Signup date (date only)
+
+  - name: stg_subscriptions
+    description: Cleaned and standardized subscription data
+    columns:
+      - name: subscription_id
+        description: Unique identifier for each subscription (PK)
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: FK to customers
+        tests:
+          - not_null
+      - name: plan_id
+        description: FK to plan_tiers
+      - name: status
+        description: "Current status: 'active' or 'churned'"
+        tests:
+          - accepted_values:
+              values: ['active', 'churned']
+      - name: billing_cycle
+        description: "'monthly' or 'annual'"
+      - name: mrr
+        description: Current monthly recurring revenue
+      - name: start_date
+        description: Subscription start date
+      - name: end_date
+        description: Subscription end date (null if active)
+      - name: subscription_length_days
+        description: Duration of subscription in days
+
+  - name: stg_subscription_events
+    description: Cleaned subscription lifecycle events with categorization
+    columns:
+      - name: event_id
+        description: Unique event identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: subscription_id
+        description: FK to subscriptions
+      - name: customer_id
+        description: FK to customers
+      - name: event_type
+        description: Event type (lowercase, standardized)
+      - name: event_category
+        description: "Derived category: acquisition, expansion, contraction, churn"
+        tests:
+          - accepted_values:
+              values: ['acquisition', 'expansion', 'contraction', 'churn', 'other']
+      - name: mrr_change
+        description: Change in MRR (positive or negative)
+      - name: mrr_after
+        description: MRR after this event
+      - name: event_at
+        description: Event timestamp
+      - name: event_date
+        description: Event date
+      - name: event_month_key
+        description: "Month key in YYYY-MM format"
+
+  - name: stg_payments
+    description: Cleaned payment transaction data with success flags
+    columns:
+      - name: payment_id
+        description: Unique payment identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: subscription_id
+        description: FK to subscriptions
+      - name: customer_id
+        description: FK to customers
+      - name: amount
+        description: Payment amount
+      - name: currency
+        description: ISO currency code
+      - name: payment_method
+        description: "Payment method: credit_card, ach, wire"
+      - name: status
+        description: Payment status
+      - name: is_successful
+        description: Boolean flag for successful payments
+      - name: is_failed
+        description: Boolean flag for failed payments
+      - name: payment_date
+        description: Date payment was processed
+
+  - name: stg_marketing_touches
+    description: Cleaned marketing touchpoint data for attribution analysis
+    columns:
+      - name: touch_id
+        description: Unique touchpoint identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: FK to customers
+      - name: channel_id
+        description: FK to marketing_channels
+      - name: touch_type
+        description: Type of interaction
+      - name: landing_page
+        description: Page URL path
+      - name: utm_campaign
+        description: Campaign identifier
+      - name: touched_at
+        description: Touch timestamp
+      - name: touch_date
+        description: Touch date
+      - name: converted_at
+        description: Conversion timestamp
+      - name: days_to_conversion
+        description: Days from touch to conversion

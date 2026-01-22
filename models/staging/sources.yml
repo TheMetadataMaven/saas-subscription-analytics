@@ -1,0 +1,92 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Raw source data from CloudSync Pro's operational systems
+    database: "{{ env_var('DBT_PROJECT', 'saas_analytics') }}"
+    schema: raw
+    tables:
+      - name: customers
+        description: Customer account information captured at signup
+        columns:
+          - name: customer_id
+            description: Unique identifier for each customer
+            tests:
+              - unique
+              - not_null
+          - name: signup_date
+            description: Date and time of account creation
+            tests:
+              - not_null
+
+      - name: subscriptions
+        description: Subscription records tracking plan enrollment
+        columns:
+          - name: subscription_id
+            description: Unique identifier for each subscription
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Foreign key to customers table
+            tests:
+              - not_null
+              - relationships:
+                  to: source('raw', 'customers')
+                  field: customer_id
+
+      - name: subscription_events
+        description: Lifecycle events for each subscription
+        columns:
+          - name: event_id
+            description: Unique event identifier
+            tests:
+              - unique
+              - not_null
+          - name: event_type
+            description: Event classification
+            tests:
+              - accepted_values:
+                  values: ['subscription_started', 'subscription_upgraded', 'subscription_downgraded', 'subscription_churned', 'subscription_reactivated']
+
+      - name: payments
+        description: Payment transaction records
+        columns:
+          - name: payment_id
+            description: Unique payment identifier
+            tests:
+              - unique
+              - not_null
+          - name: status
+            description: Payment status
+            tests:
+              - accepted_values:
+                  values: ['succeeded', 'failed']
+
+      - name: marketing_touches
+        description: Marketing touchpoints before conversion
+        columns:
+          - name: touch_id
+            description: Unique touchpoint identifier
+            tests:
+              - unique
+              - not_null
+
+seeds:
+  - name: plan_tiers
+    description: Product plan definitions and pricing
+    columns:
+      - name: plan_id
+        description: Unique plan identifier
+        tests:
+          - unique
+          - not_null
+
+  - name: marketing_channels
+    description: Marketing channel reference data
+    columns:
+      - name: channel_id
+        description: Unique channel identifier
+        tests:
+          - unique
+          - not_null

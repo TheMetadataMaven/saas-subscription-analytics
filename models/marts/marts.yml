@@ -1,0 +1,187 @@
+version: 2
+
+models:
+  - name: fct_mrr
+    description: >
+      Monthly MRR fact table with complete movement breakdown. One row per month 
+      containing all MRR metrics, customer counts, growth rates, and key SaaS KPIs.
+    meta:
+      owner: finance
+      pii: false
+    columns:
+      - name: month_date
+        description: First day of month
+        tests:
+          - unique
+          - not_null
+      - name: month_key
+        description: "Month key in YYYY-MM format"
+      - name: active_customers
+        description: Customers with MRR > 0 at month end
+      - name: new_customers
+        description: First-time customers this month
+      - name: churned_customers
+        description: Customers who churned this month
+      - name: ending_mrr
+        description: Total MRR at month end
+      - name: new_mrr
+        description: MRR from new customers
+      - name: expansion_mrr
+        description: MRR from upgrades
+      - name: contraction_mrr
+        description: MRR lost to downgrades
+      - name: churned_mrr
+        description: MRR lost to churn
+      - name: net_new_mrr
+        description: "Net MRR change: new + expansion - contraction - churn"
+      - name: mrr_growth_rate_pct
+        description: Month-over-month MRR growth percentage
+      - name: gross_mrr_churn_rate_pct
+        description: Churned MRR / Beginning MRR
+      - name: net_revenue_retention_pct
+        description: Net Revenue Retention (NRR) percentage
+      - name: quick_ratio
+        description: "(New + Expansion) / (Contraction + Churn)"
+      - name: arpc
+        description: Average Revenue Per Customer
+
+  - name: fct_subscription_events
+    description: >
+      Enriched subscription lifecycle events for analysis. One row per event 
+      with full customer context, tenure metrics, and time dimensions.
+    meta:
+      owner: product
+      pii: false
+    columns:
+      - name: event_id
+        description: Event identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: subscription_id
+        description: Subscription FK
+      - name: customer_id
+        description: Customer FK
+      - name: event_type
+        description: Event type
+      - name: event_category
+        description: Event category
+      - name: event_date
+        description: Event date
+      - name: mrr_change
+        description: MRR impact of event
+      - name: mrr_after
+        description: MRR after event
+      - name: tenure_bucket
+        description: Customer tenure band at event time
+      - name: signup_cohort_month
+        description: Customer's signup cohort
+
+  - name: dim_customers
+    description: >
+      Customer dimension with current state and lifetime metrics. One row per 
+      customer containing attributes, subscription state, lifetime metrics, 
+      and health indicators.
+    meta:
+      owner: customer_success
+      pii: true
+    columns:
+      - name: customer_id
+        description: Customer identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        description: Company name
+      - name: industry
+        description: Industry classification
+      - name: company_size
+        description: Company size band
+      - name: customer_status
+        description: "Current status: active_paying, active_free, churned"
+        tests:
+          - accepted_values:
+              values: ['active_paying', 'active_free', 'churned', 'unknown']
+      - name: current_mrr
+        description: Current monthly recurring revenue
+      - name: current_arr
+        description: Current annual recurring revenue
+      - name: lifetime_revenue
+        description: Total revenue collected from customer
+      - name: days_since_signup
+        description: Customer tenure in days
+      - name: has_churned
+        description: Whether customer has ever churned
+      - name: health_status
+        description: "Customer health: healthy, stable, at_risk, churned"
+      - name: signup_cohort_month
+        description: Signup cohort key
+
+  - name: dim_subscriptions
+    description: >
+      Subscription dimension with plan details and lifecycle state. One row 
+      per subscription with plan information, financial metrics, and duration.
+    meta:
+      owner: finance
+      pii: false
+    columns:
+      - name: subscription_id
+        description: Subscription identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Customer FK
+      - name: plan_name
+        description: Plan name
+      - name: plan_tier
+        description: Plan tier classification
+      - name: status
+        description: Subscription status
+      - name: mrr
+        description: Monthly recurring revenue
+      - name: arr
+        description: Annual recurring revenue
+      - name: subscription_length_days
+        description: Duration of subscription
+      - name: tenure_bucket
+        description: Duration band
+      - name: is_active
+        description: Active subscription flag
+      - name: is_churned
+        description: Churned subscription flag
+      - name: churn_timing
+        description: "Churn timing classification: early_churn, standard_churn, late_churn"
+
+  - name: rpt_cohort_retention
+    description: >
+      Pre-aggregated cohort retention matrix. One row per cohort-month combination 
+      for building retention heatmaps and cohort comparison analysis.
+    meta:
+      owner: product
+      pii: false
+    columns:
+      - name: cohort_month
+        description: Signup cohort month
+        tests:
+          - not_null
+      - name: cohort_month_key
+        description: "Cohort month in YYYY-MM format"
+      - name: months_since_signup
+        description: "Period number (0-24)"
+        tests:
+          - not_null
+      - name: period_label
+        description: "Display label: M0, M1, M2..."
+      - name: cohort_size
+        description: Original cohort size
+      - name: active_customers
+        description: Customers still active in this period
+      - name: retention_rate
+        description: Retention percentage vs cohort size
+      - name: retained_mrr
+        description: Total MRR from cohort in this period
+      - name: mrr_retention_from_m0
+        description: MRR retention percentage vs M0 (can exceed 100%)
+      - name: cumulative_churn_rate
+        description: Cumulative churn percentage

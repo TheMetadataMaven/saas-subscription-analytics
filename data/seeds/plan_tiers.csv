@@ -1,0 +1,5 @@
+plan_id,plan_name,plan_tier,monthly_price,annual_price,storage_gb,max_users,features
+1,Starter,free,0.00,0.00,5,1,"basic_sync"
+2,Pro,professional,29.00,290.00,100,5,"basic_sync,advanced_sharing,priority_support"
+3,Team,business,79.00,790.00,500,20,"basic_sync,advanced_sharing,priority_support,admin_console,sso"
+4,Enterprise,enterprise,199.00,1990.00,2000,100,"basic_sync,advanced_sharing,priority_support,admin_console,sso,dedicated_support,custom_integrations"

@@ -1,0 +1,11 @@
+channel_id,channel_name,channel_category,is_paid,typical_cac
+1,google_ads,paid_search,true,85.00
+2,facebook_ads,paid_social,true,65.00
+3,linkedin_ads,paid_social,true,120.00
+4,organic_search,organic,false,15.00
+5,direct,direct,false,10.00
+6,referral,referral,false,25.00
+7,content_marketing,organic,false,35.00
+8,email_campaign,owned,false,20.00
+9,partner,partnership,false,45.00
+10,webinar,events,true,55.00

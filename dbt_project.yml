@@ -1,0 +1,59 @@
+name: 'saas_subscription_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'default'
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["data/seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  saas_subscription_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags: ['staging']
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+      +tags: ['intermediate']
+    marts:
+      +materialized: table
+      +schema: marts
+      +tags: ['marts']
+
+seeds:
+  saas_subscription_analytics:
+    +schema: seeds
+    plan_tiers:
+      +column_types:
+        plan_id: INT64
+        monthly_price: NUMERIC
+        annual_price: NUMERIC
+        storage_gb: INT64
+        max_users: INT64
+    marketing_channels:
+      +column_types:
+        channel_id: INT64
+        is_paid: BOOLEAN
+        typical_cac: NUMERIC
+
+vars:
+  # Date range for analysis
+  start_date: '2023-01-01'
+  end_date: '2024-12-31'
+  
+  # Time decay half-life (days) for attribution
+  attribution_half_life: 7
+  
+  # Cohort retention max months
+  max_cohort_months: 24
