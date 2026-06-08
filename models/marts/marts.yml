@@ -185,3 +185,87 @@ models:
         description: MRR retention percentage vs M0 (can exceed 100%)
       - name: cumulative_churn_rate
         description: Cumulative churn percentage
+
+  - name: rpt_churn_risk
+    description: >
+      Customer-level churn-risk scorecard for active customers. A transparent,
+      rules-based score (0-100) built from weighted leading indicators, with a
+      risk band and the per-customer MRR exposed. One row per active customer.
+    meta:
+      owner: customer_success
+      pii: true
+    columns:
+      - name: customer_id
+        description: Customer identifier (PK)
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        description: Company name
+      - name: industry
+        description: Industry classification
+      - name: company_size
+        description: Company size band
+      - name: acquisition_channel
+        description: Channel the customer was acquired through
+      - name: current_plan_tier
+        description: Current plan tier
+      - name: customer_status
+        description: "Lifecycle status (scored set is active_paying or active_free)"
+        tests:
+          - accepted_values:
+              values: ['active_paying', 'active_free']
+      - name: signup_cohort_month
+        description: Signup cohort key (YYYY-MM)
+      - name: tenure_bucket
+        description: Customer tenure band
+      - name: health_status
+        description: Health indicator carried from dim_customers
+      - name: current_mrr
+        description: Current monthly recurring revenue
+      - name: current_arr
+        description: Current annual recurring revenue
+      - name: peak_mrr
+        description: Highest MRR the customer has ever reached
+      - name: mrr_erosion_pct
+        description: Percent of peak MRR lost (peak - current) / peak
+      - name: upgrade_count
+        description: Lifetime upgrade (expansion) events
+      - name: downgrade_count
+        description: Lifetime downgrade (contraction) events
+      - name: failed_payments
+        description: Count of failed payment attempts
+      - name: successful_payments
+        description: Count of successful payments
+      - name: payment_success_rate
+        description: Successful payments / total payments (percent)
+      - name: days_since_last_payment
+        description: Days since the most recent payment
+      - name: times_churned
+        description: Number of prior churn events
+      - name: is_resurrected
+        description: Whether the customer previously churned and returned
+      - name: pts_payment_failures
+        description: Risk points from failed payments (0-25)
+      - name: pts_stale_payment
+        description: Risk points from billing silence (0-20)
+      - name: pts_downgrades
+        description: Risk points from net downgrade behavior (0-15)
+      - name: pts_mrr_erosion
+        description: Risk points from MRR decline vs peak (0-20)
+      - name: pts_prior_churn
+        description: Risk points from prior churn history (0-10)
+      - name: pts_early_tenure
+        description: Risk points from early-tenure fragility (0-10)
+      - name: churn_risk_score
+        description: "Composite churn-risk score, 0-100 (higher = more likely to churn)"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Risk band derived from score: low, medium, high, critical"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['low', 'medium', 'high', 'critical']
+      - name: mrr_at_risk
+        description: current_mrr exposed when risk_band is high or critical, else 0
