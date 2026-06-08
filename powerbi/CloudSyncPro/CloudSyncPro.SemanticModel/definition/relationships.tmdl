@@ -1,0 +1,7 @@
+relationship 9b1c2d3e-8000-4a5b-8c6d-000000000001
+	fromColumn: dim_subscriptions.customer_id
+	toColumn: dim_customers.customer_id
+
+relationship 9b1c2d3e-8000-4a5b-8c6d-000000000002
+	fromColumn: rpt_churn_risk.customer_id
+	toColumn: dim_customers.customer_id

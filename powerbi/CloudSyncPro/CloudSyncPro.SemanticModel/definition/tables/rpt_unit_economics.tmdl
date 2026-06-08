@@ -1,6 +1,18 @@
 table rpt_unit_economics
 	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000002
 
+	measure 'Avg LTV:CAC' = AVERAGE(rpt_unit_economics[ltv_to_cac_ratio])
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-3400-4a5b-8c6d-000000000001
+
+	measure 'Avg Payback (mo)' = AVERAGE(rpt_unit_economics[cac_payback_months])
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-3400-4a5b-8c6d-000000000002
+
+	measure 'Avg ROI %' = AVERAGE(rpt_unit_economics[acquisition_roi_pct]) / 100
+		formatString: 0.0%
+		lineageTag: 9b1c2d3e-3400-4a5b-8c6d-000000000003
+
 	column acquisition_channel
 		dataType: string
 		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000001

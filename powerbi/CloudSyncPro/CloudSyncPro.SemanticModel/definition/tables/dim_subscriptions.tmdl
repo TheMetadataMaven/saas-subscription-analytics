@@ -1,0 +1,121 @@
+table dim_subscriptions
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000005
+
+	measure 'Active Subscriptions' = CALCULATE(COUNTROWS(dim_subscriptions), dim_subscriptions[is_active] = TRUE)
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3200-4a5b-8c6d-000000000001
+
+	measure 'Subscription MRR' = SUM(dim_subscriptions[mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3200-4a5b-8c6d-000000000002
+
+	column subscription_id
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: subscription_id
+		annotation SummarizationSetBy = Automatic
+
+	column customer_id
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000002
+		summarizeBy: none
+		sourceColumn: customer_id
+		annotation SummarizationSetBy = Automatic
+
+	column plan_name
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000003
+		summarizeBy: none
+		sourceColumn: plan_name
+		annotation SummarizationSetBy = Automatic
+
+	column plan_tier
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000004
+		summarizeBy: none
+		sourceColumn: plan_tier
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000005
+		summarizeBy: none
+		sourceColumn: status
+		annotation SummarizationSetBy = Automatic
+
+	column billing_cycle
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000006
+		summarizeBy: none
+		sourceColumn: billing_cycle
+		annotation SummarizationSetBy = Automatic
+
+	column mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000007
+		summarizeBy: sum
+		sourceColumn: mrr
+		annotation SummarizationSetBy = Automatic
+
+	column subscription_length_days
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000008
+		summarizeBy: none
+		sourceColumn: subscription_length_days
+		annotation SummarizationSetBy = Automatic
+
+	column tenure_bucket
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-000000000009
+		summarizeBy: none
+		sourceColumn: tenure_bucket
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-00000000000a
+		summarizeBy: none
+		sourceColumn: is_active
+		annotation SummarizationSetBy = Automatic
+
+	column is_churned
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-00000000000b
+		summarizeBy: none
+		sourceColumn: is_churned
+		annotation SummarizationSetBy = Automatic
+
+	column churn_timing
+		dataType: string
+		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-00000000000c
+		summarizeBy: none
+		sourceColumn: churn_timing
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_subscriptions = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\dim_subscriptions.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"subscription_id", type text},
+						{"customer_id", type text},
+						{"plan_name", type text},
+						{"plan_tier", type text},
+						{"status", type text},
+						{"billing_cycle", type text},
+						{"mrr", type number},
+						{"subscription_length_days", Int64.Type},
+						{"tenure_bucket", type text},
+						{"is_active", type logical},
+						{"is_churned", type logical},
+						{"churn_timing", type text}
+					})
+				in
+					Typed

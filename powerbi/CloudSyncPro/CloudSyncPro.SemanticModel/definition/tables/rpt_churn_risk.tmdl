@@ -1,6 +1,10 @@
 table rpt_churn_risk
 	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000003
 
+	measure 'Customer Count' = COUNTROWS(rpt_churn_risk)
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3500-4a5b-8c6d-000000000001
+
 	column customer_id
 		dataType: string
 		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000001

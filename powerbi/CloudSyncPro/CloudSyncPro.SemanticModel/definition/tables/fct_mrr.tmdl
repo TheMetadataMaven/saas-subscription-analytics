@@ -53,6 +53,10 @@ table fct_mrr
 		formatString: \$#,0
 		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000d
 
+	measure 'MRR (monthly)' = SUM(fct_mrr[ending_mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000e
+
 	column month_date
 		dataType: dateTime
 		formatString: yyyy-mm-dd

@@ -1,0 +1,25 @@
+customer_id,company_name,industry,company_size,country,acquisition_channel,current_plan_tier,customer_status,current_mrr,lifetime_revenue,health_status,signup_cohort_month
+C0001,Acme Co,Technology,51-200,United States,referral,business,active_paying,79,1850,stable,2024-01
+C0002,Bright Labs,Healthcare,11-50,United Kingdom,organic_search,professional,active_paying,29,610,healthy,2024-02
+C0003,Cloudy Inc,Finance,500+,United States,partner,enterprise,active_paying,199,4970,healthy,2023-11
+C0004,Delta Corp,Retail,51-200,Canada,google_ads,business,active_paying,79,1420,stable,2024-03
+C0005,Echo Ltd,Education,11-50,Australia,content_marketing,professional,active_paying,29,440,stable,2024-04
+C0006,Foxtrot LLC,Technology,201-500,United States,direct,business,active_paying,79,2100,healthy,2023-12
+C0007,Golf Group,Manufacturing,500+,Germany,linkedin_ads,enterprise,active_paying,199,3580,stable,2024-01
+C0008,Hotel Systems,Retail,51-200,United Kingdom,facebook_ads,business,active_paying,79,990,at_risk,2024-05
+C0009,India Tech,Technology,11-50,United States,email_campaign,professional,active_paying,29,350,at_risk,2024-06
+C0010,Juliet AG,Finance,500+,Germany,partner,enterprise,active_paying,199,2980,stable,2024-02
+C0011,Kilo Co,Education,1-10,Canada,organic_search,professional,active_paying,29,290,at_risk,2024-07
+C0012,Lima Soft,Technology,51-200,United States,webinar,business,active_paying,79,710,at_risk,2024-04
+C0013,Mike Media,Retail,201-500,Australia,facebook_ads,enterprise,active_paying,199,1990,at_risk,2024-03
+C0014,November Oy,Healthcare,11-50,United Kingdom,google_ads,professional,active_paying,29,230,at_risk,2024-08
+C0015,Oscar PLC,Finance,500+,United States,linkedin_ads,enterprise,active_paying,199,1790,at_risk,2024-05
+C0016,Papa Inc,Manufacturing,51-200,Germany,google_ads,business,active_paying,79,560,at_risk,2024-06
+C0017,Quebec Ltd,Technology,1-10,United States,direct,free,active_free,0,0,stable,2024-09
+C0018,Romeo Inc,Retail,11-50,Canada,organic_search,professional,churned,0,320,churned,2023-10
+C0019,Sierra Co,Education,51-200,United Kingdom,content_marketing,business,active_paying,79,1280,healthy,2024-02
+C0020,Tango Group,Finance,201-500,United States,referral,enterprise,active_paying,199,3180,healthy,2023-12
+C0021,Uniform AG,Healthcare,500+,Germany,partner,enterprise,active_paying,199,2380,stable,2024-01
+C0022,Victor LLC,Technology,11-50,Australia,facebook_ads,professional,churned,0,180,churned,2023-11
+C0023,Whiskey Co,Manufacturing,51-200,Canada,webinar,business,active_paying,79,840,stable,2024-07
+C0024,Xray Inc,Retail,1-10,United States,email_campaign,free,active_free,0,0,stable,2024-08
