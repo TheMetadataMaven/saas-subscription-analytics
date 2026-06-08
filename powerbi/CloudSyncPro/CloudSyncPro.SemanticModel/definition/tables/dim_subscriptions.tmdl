@@ -76,7 +76,6 @@ table dim_subscriptions
 
 	column is_active
 		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-00000000000a
 		summarizeBy: none
 		sourceColumn: is_active
@@ -84,7 +83,6 @@ table dim_subscriptions
 
 	column is_churned
 		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 9b1c2d3e-7200-4a5b-8c6d-00000000000b
 		summarizeBy: none
 		sourceColumn: is_churned
