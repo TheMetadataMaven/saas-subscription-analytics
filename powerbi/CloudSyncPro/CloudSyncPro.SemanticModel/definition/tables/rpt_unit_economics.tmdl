@@ -1,0 +1,111 @@
+table rpt_unit_economics
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000002
+
+	column acquisition_channel
+		dataType: string
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: acquisition_channel
+		annotation SummarizationSetBy = Automatic
+
+	column customers_acquired
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000002
+		summarizeBy: sum
+		sourceColumn: customers_acquired
+		annotation SummarizationSetBy = Automatic
+
+	column cac
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000003
+		summarizeBy: none
+		sourceColumn: cac
+		annotation SummarizationSetBy = Automatic
+
+	column realized_ltv
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000004
+		summarizeBy: none
+		sourceColumn: realized_ltv
+		annotation SummarizationSetBy = Automatic
+
+	column predicted_ltv
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000005
+		summarizeBy: none
+		sourceColumn: predicted_ltv
+		annotation SummarizationSetBy = Automatic
+
+	column ltv_to_cac_ratio
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000006
+		summarizeBy: none
+		sourceColumn: ltv_to_cac_ratio
+		annotation SummarizationSetBy = Automatic
+
+	column cac_payback_months
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000007
+		summarizeBy: none
+		sourceColumn: cac_payback_months
+		annotation SummarizationSetBy = Automatic
+
+	column acquisition_roi_pct
+		dataType: double
+		formatString: #,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000008
+		summarizeBy: none
+		sourceColumn: acquisition_roi_pct
+		annotation SummarizationSetBy = Automatic
+
+	column total_acquisition_spend
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-000000000009
+		summarizeBy: sum
+		sourceColumn: total_acquisition_spend
+		annotation SummarizationSetBy = Automatic
+
+	column total_lifetime_revenue
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-00000000000a
+		summarizeBy: sum
+		sourceColumn: total_lifetime_revenue
+		annotation SummarizationSetBy = Automatic
+
+	column churn_rate_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-5000-4a5b-8c6d-00000000000b
+		summarizeBy: none
+		sourceColumn: churn_rate_pct
+		annotation SummarizationSetBy = Automatic
+
+	partition rpt_unit_economics = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\rpt_unit_economics.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"acquisition_channel", type text},
+						{"customers_acquired", Int64.Type},
+						{"cac", type number},
+						{"realized_ltv", type number},
+						{"predicted_ltv", type number},
+						{"ltv_to_cac_ratio", type number},
+						{"cac_payback_months", type number},
+						{"acquisition_roi_pct", type number},
+						{"total_acquisition_spend", type number},
+						{"total_lifetime_revenue", type number},
+						{"churn_rate_pct", type number}
+					})
+				in
+					Typed

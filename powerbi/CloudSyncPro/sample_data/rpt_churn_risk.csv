@@ -1,0 +1,17 @@
+customer_id,company_name,risk_band,churn_risk_score,current_mrr,mrr_at_risk
+C0001,Acme Co,low,8,79,0
+C0002,Bright Labs,low,12,29,0
+C0003,Cloudy Inc,low,5,199,0
+C0004,Delta Corp,low,18,79,0
+C0005,Echo Ltd,low,21,29,0
+C0006,Foxtrot LLC,low,15,79,0
+C0007,Golf Group,low,11,199,0
+C0008,Hotel Systems,medium,32,79,0
+C0009,India Tech,medium,41,29,0
+C0010,Juliet AG,medium,28,199,0
+C0011,Kilo Co,medium,38,79,0
+C0012,Lima Soft,high,57,79,79
+C0013,Mike Media,high,63,199,199
+C0014,November Oy,high,52,29,29
+C0015,Oscar PLC,critical,82,199,199
+C0016,Papa Inc,critical,91,79,79

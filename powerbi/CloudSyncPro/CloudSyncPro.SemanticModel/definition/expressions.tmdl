@@ -1,0 +1,5 @@
+/// Folder that holds the sample CSV files. Defaults to the path in this repo;
+/// change it (Transform data > Manage Parameters) if you move the project.
+expression DataFolder = "C:\Users\Catrina Walters\Downloads\SaasProjectNew\saas-subscription-analytics\powerbi\CloudSyncPro\sample_data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 9b1c2d3e-1000-4a5b-8c6d-000000000001
+	annotation PBI_ResultType = Text

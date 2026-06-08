@@ -12,6 +12,7 @@ on top of the dbt marts, plus a live visual preview.
 | [`measures.dax`](measures.dax) | Complete DAX measure library — all primary enterprise KPIs (MRR, ARR, NRR, GRR, churn, Quick Ratio, ARPC, CAC, LTV, LTV:CAC, payback, ROI, Rule of 40, Magic Number, churn-risk, cohort). |
 | [`model_guide.md`](model_guide.md) | How to connect Power BI to the BigQuery marts, the date table, and the star-schema relationships. |
 | [`theme.json`](theme.json) | Color-blind-safe Power BI theme (blue/orange sentiment, dark surface). Import via **View → Themes → Browse for themes**. |
+| [`CloudSyncPro/`](CloudSyncPro) | **Loadable Power BI project (PBIP)** — open `CloudSyncPro.pbip` in Power BI Desktop. Includes the semantic model, sample data, and all measures. See [`CloudSyncPro/HOW_TO_OPEN.md`](CloudSyncPro/HOW_TO_OPEN.md). |
 
 ## Build in ~30 minutes
 

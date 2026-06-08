@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "sections": [
+    {
+      "name": "section1",
+      "displayName": "Executive Overview",
+      "filters": "[]",
+      "ordinal": 0,
+      "visualContainers": [],
+      "config": "{}",
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "config": "{\"version\":\"5.43\",\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true}",
+  "layoutOptimization": 0
+}

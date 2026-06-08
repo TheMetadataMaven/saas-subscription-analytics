@@ -1,0 +1,17 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+	annotation PBIDesktopVersion = 2.130.0.0
+
+	annotation PBI_QueryOrder = ["DataFolder","fct_mrr","rpt_unit_economics","rpt_churn_risk"]
+
+	ref table fct_mrr
+	ref table rpt_unit_economics
+	ref table rpt_churn_risk
+
+	ref expression DataFolder
