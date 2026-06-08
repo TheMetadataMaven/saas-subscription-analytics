@@ -36,27 +36,35 @@ called **`DataFolder`**, which defaults to this project's path on this machine:
 - `fct_mrr` — 12 monthly rows (MRR, movements, NRR, Quick Ratio, ARPC)
 - `rpt_unit_economics` — 10 channels (CAC, LTV, LTV:CAC, payback, ROI)
 - `rpt_churn_risk` — sample at-risk customers by band
+- `dim_customers` — 24 customers (industry, size, country, plan, status, MRR)
+- `dim_subscriptions` — 24 subscriptions (plan, billing, tenure, status)
+- `rpt_cohort_retention` — cohort × period retention matrix
 
-**Measures** (on `fct_mrr`): MRR, ARR, Net New MRR, Net Revenue Retention %,
-Quick Ratio, Active Customers, ARPC, LTV : CAC, CAC Payback (months),
-Acquisition ROI %, CAC, Customers At Risk, MRR At Risk.
+**Measures** include: MRR, ARR, Net New MRR, MRR (monthly), Net Revenue
+Retention %, Quick Ratio, Active Customers, ARPC, LTV : CAC, CAC Payback,
+Acquisition ROI %, CAC, Customers At Risk, MRR At Risk, Avg LTV:CAC,
+Avg Payback (mo), Avg ROI %, Customer Count, Total MRR, ARPU, Total Customers,
+Avg Retention %.
 
-## 5. Build the Executive page (≈5 min)
+**Two relationships** link `dim_subscriptions` and `rpt_churn_risk` to
+`dim_customers`.
 
-The page **Executive Overview** is intentionally empty. Drag these on:
+## 5. The report is pre-built (3 pages)
 
-| Visual | Field / measure |
+Visuals are already placed — just open and look:
+
+| Page | Visuals |
 |---|---|
-| Card | `MRR` |
-| Card | `ARR` |
-| Card | `Net Revenue Retention %` |
-| Card | `LTV : CAC` |
-| Line chart | Axis `month_key`, Values `MRR` (or `ending_mrr`) |
-| Clustered bar | Axis `acquisition_channel`, Values `ltv_to_cac_ratio` |
-| Donut | Legend `risk_band`, Values count of `customer_id` |
+| **Executive Overview** | Cards: MRR, ARR, NRR %, Quick Ratio · Line: MRR by month · Column: Net New MRR by month |
+| **Unit Economics & Risk** | Cards: Avg LTV:CAC, Avg Payback, Avg ROI % · Bar: LTV:CAC by channel · Donut: customers by risk band |
+| **Market & Segments** | Treemap: MRR by industry · Column: ARPU by company size · Bar: MRR by country |
 
 Then **View → Themes → Browse for themes → `../theme.json`** for the
-color-blind-safe palette. The full 5-page layout is in `../report_spec.md`.
+color-blind-safe palette. The full 5-page target layout is in `../report_spec.md`
+if you want to extend it (e.g., a cohort heatmap from `rpt_cohort_retention`).
+
+> If a visual opens empty, its field role just needs a nudge — click the visual
+> and re-drop the listed field/measure. The data and measures are all present.
 
 ## Notes
 
