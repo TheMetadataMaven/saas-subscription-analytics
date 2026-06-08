@@ -52,12 +52,29 @@ netnew = [float(r["net_new_mrr"]) for r in mrr]
 last = mrr[-1]
 mrr_v = float(last["ending_mrr"])
 
+# prior-month context for KPI deltas
+prev = mrr[-2]
+mrr_prev = float(prev["ending_mrr"])
+mrr_mom = (mrr_v - mrr_prev) / mrr_prev * 100
+nrr_v = float(last["nrr_pct"])
+qr_v, qr_prev = float(last["quick_ratio"]), float(prev["quick_ratio"])
+ltvcac = sum(float(r["ltv_to_cac_ratio"]) for r in ue) / len(ue)
+
+
+def arrow(x):
+    return "▲" if x >= 0 else "▼"   # ▲ / ▼
+
+
+# (label, value, delta/status line, sentiment key)
 kpis = [
-    ("MRR", f"${mrr_v/1000:.1f}K"),
-    ("ARR", f"${mrr_v*12/1e6:.2f}M"),
-    ("Net Rev Retention", f"{float(last['nrr_pct']):.1f}%"),
-    ("LTV : CAC", f"{sum(float(r['ltv_to_cac_ratio']) for r in ue)/len(ue):.1f}x"),
-    ("Quick Ratio", f"{float(last['quick_ratio']):.1f}"),
+    ("MRR", f"${mrr_v/1000:.1f}K", f"{arrow(mrr_mom)} {abs(mrr_mom):.1f}% MoM", "pos" if mrr_mom >= 0 else "neg"),
+    ("ARR", f"${mrr_v*12/1e6:.2f}M", f"{arrow(mrr_mom)} {abs(mrr_mom):.1f}% MoM", "pos" if mrr_mom >= 0 else "neg"),
+    ("Net Rev Retention", f"{nrr_v:.1f}%",
+     ("▼ below 100% target" if nrr_v < 100 else "▲ above 100%"),
+     "neg" if nrr_v < 100 else "pos"),
+    ("LTV : CAC", f"{ltvcac:.1f}x", "✓ above 3.0 target", "pos"),
+    ("Quick Ratio", f"{qr_v:.1f}", f"{arrow(qr_v - qr_prev)} from {qr_prev:.1f} last mo",
+     "pos" if qr_v >= qr_prev else "neg"),
 ]
 
 ue_sorted = sorted(ue, key=lambda r: float(r["ltv_to_cac_ratio"]))
@@ -89,25 +106,28 @@ def build(T):
                          "xtick.color": T["muted"], "ytick.color": T["muted"], "font.size": 9})
     fig = plt.figure(figsize=(15, 9.5), dpi=120, facecolor=T["bg"])
     gs = GridSpec(3, 6, figure=fig, height_ratios=[1.1, 1.1, 1.0],
-                  hspace=0.55, wspace=0.7, left=0.05, right=0.97, top=0.78, bottom=0.06)
+                  hspace=0.55, wspace=0.7, left=0.05, right=0.97, top=0.75, bottom=0.06)
 
     fig.text(0.05, 0.965, "CloudSync Pro — Executive Analytics", fontsize=17,
              fontweight="bold", color=T["text"])
     fig.text(0.05, 0.943,
              "Sample data preview · color-blind-safe palette (blue = good, orange = caution)",
              fontsize=9.5, color=T["muted"])
+    fig.text(0.97, 0.958, "FY2024 · as of Dec 2024", fontsize=10, color=T["muted"],
+             ha="right", va="center")
 
-    # KPI cards — evenly distributed across the full width
+    # KPI cards — evenly distributed, each with a delta / status line
     n, L, R, gap = len(kpis), 0.05, 0.97, 0.018
     w = (R - L - (n - 1) * gap) / n
-    for i, (label, val) in enumerate(kpis):
-        ax = fig.add_axes([L + i * (w + gap), 0.82, w, 0.095])
+    for i, (label, val, delta, sentiment) in enumerate(kpis):
+        ax = fig.add_axes([L + i * (w + gap), 0.795, w, 0.118])
         ax.set_facecolor(T["surf"])
         for s in ax.spines.values():
             s.set_color(T["grid"])
         ax.set_xticks([]); ax.set_yticks([])
-        ax.text(0.5, 0.64, val, ha="center", va="center", fontsize=18, fontweight="bold", color=T["text"])
-        ax.text(0.5, 0.24, label.upper(), ha="center", va="center", fontsize=8, color=T["muted"])
+        ax.text(0.5, 0.74, val, ha="center", va="center", fontsize=17, fontweight="bold", color=T["text"])
+        ax.text(0.5, 0.44, label.upper(), ha="center", va="center", fontsize=7.5, color=T["muted"])
+        ax.text(0.5, 0.16, delta, ha="center", va="center", fontsize=8, color=T[sentiment])
 
     def style(ax, title):
         ax.set_facecolor(T["surf"])
@@ -121,8 +141,10 @@ def build(T):
     ax = fig.add_subplot(gs[0, 0:3]); style(ax, "MRR Trajectory")
     ax.plot(months, ending, color=T["accent"], linewidth=2.2)
     ax.fill_between(range(len(months)), ending, color=T["accent"], alpha=0.15)
+    ax.set_ylim(0, max(ending) * 1.12)          # floor at 0 — no negative dead space
     ax.set_xticks(range(0, len(months), 2)); ax.set_xticklabels(months[::2])
     ax.set_yticks(ax.get_yticks()); ax.set_yticklabels([f"${int(t/1000)}K" for t in ax.get_yticks()])
+    ax.set_ylim(0, max(ending) * 1.12)
 
     # Net New MRR
     ax = fig.add_subplot(gs[0, 3:6]); style(ax, "Net New MRR by Month")
@@ -131,13 +153,13 @@ def build(T):
     ax.set_yticks(ax.get_yticks()); ax.set_yticklabels([f"${int(t/1000)}K" for t in ax.get_yticks()])
 
     # LTV:CAC by channel
-    ax = fig.add_subplot(gs[1, 0:3]); style(ax, "LTV : CAC by Channel  (blue = 3.0+ target)")
+    ax = fig.add_subplot(gs[1, 0:2]); style(ax, "LTV : CAC by Channel  (blue = 3.0+ target)")
     ax.barh(ue_ch, ue_val, color=[T["pos"] if v >= 3 else T["warn"] for v in ue_val])
     ax.axvline(3.0, color=T["muted"], linestyle="--", linewidth=1)
-    ax.tick_params(axis="y", labelsize=8)
+    ax.tick_params(axis="y", labelsize=7.5)
 
     # Churn risk donut
-    ax = fig.add_subplot(gs[1, 3:5]); ax.set_facecolor(T["surf"])
+    ax = fig.add_subplot(gs[1, 2:4]); ax.set_facecolor(T["surf"])
     ax.set_title("Churn Risk Distribution", color=T["text"], fontsize=10.5, fontweight="bold", loc="left", pad=8)
     band_cols = {"low": T["pos"], "medium": T["warn"], "high": T["neg"], "critical": T["crit"]}
     ax.pie(list(band_ct.values()), colors=[band_cols[b] for b in band_order], startangle=90,
@@ -145,10 +167,10 @@ def build(T):
            labels=[f"{b}\n{m}" for b, m in band_ct.items()],
            textprops=dict(color=T["text"], fontsize=8))
 
-    # ARPU by company size
-    ax = fig.add_subplot(gs[1, 5]); style(ax, "ARPU by Size")
+    # ARPU by company size (2 cols — no cramped rotation)
+    ax = fig.add_subplot(gs[1, 4:6]); style(ax, "ARPU by Company Size")
     ax.bar(size_order, arpu, color=T["accent"])
-    ax.set_xticks(range(len(size_order))); ax.set_xticklabels(size_order, rotation=45, ha="right", fontsize=7)
+    ax.set_xticks(range(len(size_order))); ax.set_xticklabels(size_order, fontsize=8)
     ax.set_yticks(ax.get_yticks()); ax.set_yticklabels([f"${int(t)}" for t in ax.get_yticks()])
 
     # Cohort retention heatmap
