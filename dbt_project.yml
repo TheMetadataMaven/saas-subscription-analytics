@@ -51,9 +51,17 @@ vars:
   # Date range for analysis
   start_date: '2023-01-01'
   end_date: '2024-12-31'
-  
+
   # Time decay half-life (days) for attribution
   attribution_half_life: 7
-  
+
   # Cohort retention max months
   max_cohort_months: 24
+
+  # Assumed gross margin for unit-economics (LTV, CAC payback).
+  # SaaS benchmark ~80%; override per environment as needed.
+  gross_margin: 0.80
+
+  # Assumed monthly logo churn floor used when a channel has no
+  # observed churn yet, so predictive LTV stays finite.
+  min_monthly_churn_rate: 0.01

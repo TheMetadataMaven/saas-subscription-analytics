@@ -269,3 +269,58 @@ models:
               values: ['low', 'medium', 'high', 'critical']
       - name: mrr_at_risk
         description: current_mrr exposed when risk_band is high or critical, else 0
+
+  - name: rpt_unit_economics
+    description: >
+      Channel-level unit economics: CAC, realized and predicted LTV, LTV:CAC,
+      CAC payback, and acquisition ROI. One row per acquisition channel plus a
+      blended 'ALL CHANNELS' row. Backbone for ROI and market analysis.
+    meta:
+      owner: marketing
+      pii: false
+    columns:
+      - name: acquisition_channel
+        description: Acquisition channel name (or 'ALL CHANNELS' for the blended row)
+        tests:
+          - unique
+          - not_null
+      - name: acquisition_channel_category
+        description: Channel category (paid_search, organic, etc.; 'blended' for total)
+      - name: is_paid_acquisition
+        description: Whether the channel is paid (null on the blended row)
+      - name: customers_acquired
+        description: Distinct customers acquired through the channel
+        tests:
+          - not_null
+      - name: active_paying_customers
+        description: Customers currently active and paying
+      - name: churned_customers
+        description: Customers who have ever churned
+      - name: observed_churn_rate
+        description: Logo churn rate over the window, floored at min_monthly_churn_rate
+      - name: cac
+        description: Assumed customer acquisition cost (spend-weighted on blended row)
+      - name: total_lifetime_revenue
+        description: Sum of revenue collected from channel customers
+      - name: current_mrr
+        description: Current MRR from channel customers
+      - name: arpc
+        description: Average revenue per (paying) customer
+      - name: realized_ltv
+        description: Average lifetime revenue collected per customer (historical LTV)
+      - name: predicted_ltv
+        description: "Modeled LTV: ARPC * gross_margin / monthly churn"
+      - name: total_acquisition_spend
+        description: customers_acquired * CAC
+      - name: ltv_to_cac_ratio
+        description: "Realized LTV / CAC (healthy >= 3.0)"
+      - name: cac_payback_months
+        description: "Months to recover CAC: CAC / (ARPC * gross_margin)"
+      - name: acquisition_roi_pct
+        description: "(realized_ltv - CAC) / CAC * 100"
+      - name: avg_tenure_days
+        description: Average customer tenure in days
+      - name: active_rate_pct
+        description: Active paying customers / customers acquired
+      - name: churn_rate_pct
+        description: Churned customers / customers acquired
