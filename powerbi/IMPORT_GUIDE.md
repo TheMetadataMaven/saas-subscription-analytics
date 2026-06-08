@@ -51,8 +51,14 @@ Not required for the visuals below (each uses one table), but nice to have.
 
 Drag the fields onto each visual. For value fields, click the field's dropdown
 in the **Visualizations** pane and set the aggregation noted in parentheses.
+Each page mockup below shows the target layout (light versions:
+[executive](page_executive_light.png) · [unit economics](page_unit_economics_light.png) ·
+[market](page_market_light.png)).
 
 ### Page: Executive
+
+![Executive page mockup](page_executive.png)
+
 | Visual | Fields (aggregation) |
 |---|---|
 | Line chart | Axis `fct_mrr[month_key]`, Y `fct_mrr[ending_mrr]` (Sum) |
@@ -65,6 +71,9 @@ in the **Visualizations** pane and set the aggregation noted in parentheses.
 > → Top 1 by `month_date`). Or add the 5 measures in Step 5.
 
 ### Page: Unit Economics & Risk
+
+![Unit Economics & Risk page mockup](page_unit_economics.png)
+
 | Visual | Fields (aggregation) |
 |---|---|
 | Clustered bar | Axis `rpt_unit_economics[acquisition_channel]`, X `ltv_to_cac_ratio` (Average) |
@@ -73,6 +82,9 @@ in the **Visualizations** pane and set the aggregation noted in parentheses.
 | Card | `rpt_churn_risk[mrr_at_risk]` (Sum) |
 
 ### Page: Market & Segments
+
+![Market & Segments page mockup](page_market.png)
+
 | Visual | Fields (aggregation) |
 |---|---|
 | Treemap | Group `dim_customers[industry]`, Values `current_mrr` (Sum) |
