@@ -3,6 +3,10 @@
 This folder contains everything needed to build the executive Power BI report
 on top of the dbt marts, plus a live visual preview.
 
+![CloudSync Pro executive dashboard mockup — dark](dashboard_mockup.png)
+
+*Finished-report mockup (also available in [light theme](dashboard_mockup_light.png)).*
+
 ## ⭐ Start here (fastest, most reliable)
 
 1. Open **[`CloudSyncPro_data.xlsx`](CloudSyncPro_data.xlsx)** in Power BI:
