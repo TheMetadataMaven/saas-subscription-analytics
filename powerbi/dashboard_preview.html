@@ -7,9 +7,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
+    /* Color-blind-safe palette: blue = good, orange/vermillion = bad
+       (blue/orange diverging is distinguishable for red-green CVD).
+       Severity ramp also varies in lightness so it reads in grayscale. */
     --bg: #0f172a; --surface: #1e293b; --surface2: #243349;
     --text: #e2e8f0; --muted: #94a3b8; --accent: #2dd4bf;
-    --pos: #34d399; --neg: #f87171; --warn: #fbbf24; --crit: #fb7185;
+    --pos: #56b4e9;   /* sky blue  — positive / good        */
+    --neg: #e69f00;   /* orange    — negative / bad          */
+    --warn: #f0e442;  /* yellow    — caution                 */
+    --crit: #d55e00;  /* vermillion— critical / worst        */
     --grid: #334155;
   }
   * { box-sizing: border-box; }
@@ -97,12 +103,14 @@
 
 <footer>
   Source of truth: dbt marts in BigQuery · Measures: <code>powerbi/measures.dax</code> ·
-  Built by Catrina Walters (TheMetadataMaven). Sample figures for design preview only.
+  Built by Catrina Walters (TheMetadataMaven). Sample figures for design preview only. ·
+  Color-blind-safe palette (blue = good, orange/vermillion = bad) with arrow/label cues for redundancy.
 </footer>
 
 <script>
-const C = { text:'#e2e8f0', muted:'#94a3b8', accent:'#2dd4bf', pos:'#34d399',
-            neg:'#f87171', warn:'#fbbf24', crit:'#fb7185', grid:'#334155', surface2:'#243349' };
+// Color-blind-safe: blue=good, orange/vermillion=bad (see :root for rationale)
+const C = { text:'#e2e8f0', muted:'#94a3b8', accent:'#2dd4bf', pos:'#56b4e9',
+            neg:'#e69f00', warn:'#f0e442', crit:'#d55e00', grid:'#334155', surface2:'#243349' };
 Chart.defaults.color = C.muted;
 Chart.defaults.font.family = "Segoe UI, Roboto, sans-serif";
 Chart.defaults.plugins.legend.labels.boxWidth = 12;
@@ -163,7 +171,7 @@ new Chart(document.getElementById('payback'), {
 new Chart(document.getElementById('risk'), {
   type:'doughnut',
   data:{ labels:['Low','Medium','High','Critical'],
-    datasets:[{ data:[372,158,124,46], backgroundColor:[C.pos,C.warn,'#fb923c',C.crit], borderWidth:0 }]},
+    datasets:[{ data:[372,158,124,46], backgroundColor:[C.pos,C.warn,C.neg,C.crit], borderWidth:0 }]},
   options:{ maintainAspectRatio:false, cutout:'62%', plugins:{legend:{position:'right'}}}
 });
 
@@ -187,12 +195,11 @@ const cohorts = [
   ['2024-12',100,91,null,null,null,null,null],
 ];
 function heatColor(v){
+  // Single-hue sequential blue ramp: opacity/lightness encodes retention.
+  // Color-blind-safe (no red/green) and still legible in grayscale.
   if(v===null) return 'transparent';
   const t = v/100;                       // 0..1
-  const r = Math.round(248 - t*(248-45));
-  const g = Math.round(113 + t*(212-113));
-  const b = Math.round(113 + t*(191-113));
-  return `rgba(${r},${g},${b},${0.25+0.55*t})`;
+  return `rgba(56,189,248,${0.10 + 0.80*t})`;  // #38bdf8 sky blue
 }
 let html = '<tr><th class="cohort">Cohort</th>' + periods.map(p=>`<th>${p}</th>`).join('') + '</tr>';
 for(const row of cohorts){

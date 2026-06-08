@@ -11,6 +11,7 @@ on top of the dbt marts, plus a live visual preview.
 | [`report_spec.md`](report_spec.md) | Page-by-page build sheet: 5 pages, every visual, its type, and the measure/field it binds to. |
 | [`measures.dax`](measures.dax) | Complete DAX measure library — all primary enterprise KPIs (MRR, ARR, NRR, GRR, churn, Quick Ratio, ARPC, CAC, LTV, LTV:CAC, payback, ROI, Rule of 40, Magic Number, churn-risk, cohort). |
 | [`model_guide.md`](model_guide.md) | How to connect Power BI to the BigQuery marts, the date table, and the star-schema relationships. |
+| [`theme.json`](theme.json) | Color-blind-safe Power BI theme (blue/orange sentiment, dark surface). Import via **View → Themes → Browse for themes**. |
 
 ## Build in ~30 minutes
 
@@ -32,6 +33,15 @@ churn · Logo churn · Quick Ratio.
 Acquisition ROI · Revenue per spend $.
 **Board/efficiency:** Rule of 40 · Magic Number · Burn multiple.
 **Risk & cohorts:** Customers at risk · MRR at risk · cohort retention.
+
+## Accessibility
+
+Colors follow a **color-blind-safe** scheme: sentiment is **blue (good) / orange
+(bad)** rather than green/red, so it's legible for red-green color vision
+deficiency (~8% of men). Severity ramps also vary in lightness so they read in
+grayscale, and every color cue is paired with a second signal (▲/▼ arrow, data
+label, or text status). Apply `theme.json` and keep that pairing when adding
+visuals.
 
 ## Note on file format
 

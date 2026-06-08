@@ -5,9 +5,15 @@ purpose, the visuals, the measures/fields they bind to, and the slicers.
 Use this as the build sheet in Power BI Desktop. A live HTML preview of the
 intended look is in [`dashboard_preview.html`](dashboard_preview.html).
 
-> **Theme:** dark slate background (`#0f172a`), accent teal (`#2dd4bf`),
-> positive green (`#34d399`), negative red (`#f87171`), card surface `#1e293b`.
-> Font: Segoe UI. KPI cards across the top, detail visuals below.
+> **Theme (color-blind-safe):** dark slate background (`#0f172a`), accent teal
+> (`#2dd4bf`), card surface `#1e293b`, font Segoe UI. Sentiment uses a
+> **blue/orange** scheme — **good `#56b4e9` (sky blue)**, **caution `#f0e442`
+> (yellow)**, **bad `#e69f00` (orange)**, **critical `#d55e00` (vermillion)** —
+> instead of red/green, so it's legible for red-green color blindness (~8% of
+> men). Severity also varies in lightness (reads in grayscale). Apply
+> [`theme.json`](theme.json) and **always pair color with a second cue** (icon,
+> ▲/▼ arrow, data label, or text status) so meaning never depends on hue alone.
+> KPI cards across the top, detail visuals below.
 
 ---
 
@@ -96,7 +102,7 @@ intended look is in [`dashboard_preview.html`](dashboard_preview.html).
 | MRR at risk | KPI card | `[MRR At Risk]`, `[% MRR At Risk]` |
 | Risk band distribution | Donut | counts by `rpt_churn_risk[risk_band]` |
 | Risk drivers | Stacked bar | avg of `pts_*` columns |
-| Cohort retention heatmap | Matrix (color scale) | `rpt_cohort_retention[retention_rate]` by cohort × `months_since_signup` |
+| Cohort retention heatmap | Matrix (single-hue blue color scale) | `rpt_cohort_retention[retention_rate]` by cohort × `months_since_signup` — use a sequential blue ramp (not red→green) so it stays CVD-safe |
 | At-risk account list | Table (top by score) | customer, MRR, score, band, top driver |
 
 ---
