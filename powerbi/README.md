@@ -3,10 +3,23 @@
 This folder contains everything needed to build the executive Power BI report
 on top of the dbt marts, plus a live visual preview.
 
+## ⭐ Start here (fastest, most reliable)
+
+1. Open **[`CloudSyncPro_data.xlsx`](CloudSyncPro_data.xlsx)** in Power BI:
+   **Get data → Excel workbook**, tick all 6 sheets, **Load**.
+2. Follow **[`IMPORT_GUIDE.md`](IMPORT_GUIDE.md)** — drag fields onto visuals
+   (~10 min), apply `theme.json`, **Save As** `.pbix`.
+
+This Excel/CSV route avoids the strict PBIP format and is the recommended way
+to get a working `.pbix`. The PBIP project (`CloudSyncPro/`) is an alternative
+for editing the model as code.
+
 ## Contents
 
 | File | What it is |
 |---|---|
+| [`CloudSyncPro_data.xlsx`](CloudSyncPro_data.xlsx) | **All six tables in one workbook** — single-step import into Power BI. Built from the sample CSVs by `CloudSyncPro/build_workbook.py`. |
+| [`IMPORT_GUIDE.md`](IMPORT_GUIDE.md) | **Turnkey 10-minute build** — import the workbook, drag fields onto visuals (mostly no measures needed), theme, save. |
 | [`dashboard_preview.html`](dashboard_preview.html) | **Open in a browser** — interactive preview of the Executive Overview page (Chart.js). Uses representative sample figures to show layout, theme, and chart types. |
 | [`report_spec.md`](report_spec.md) | Page-by-page build sheet: 5 pages, every visual, its type, and the measure/field it binds to. |
 | [`measures.dax`](measures.dax) | Complete DAX measure library — all primary enterprise KPIs (MRR, ARR, NRR, GRR, churn, Quick Ratio, ARPC, CAC, LTV, LTV:CAC, payback, ROI, Rule of 40, Magic Number, churn-risk, cohort). |
