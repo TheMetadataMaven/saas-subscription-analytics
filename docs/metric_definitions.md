@@ -564,3 +564,5 @@ net_new_mrr * 12
 | CAC | Marketing | Monthly | External + dim_customers |
 | Cohort Retention | Product | Monthly | rpt_cohort_retention |
 | Health Score | Customer Success | Daily | dim_customers |
+| LTV:CAC / Payback / ROI | Marketing | Monthly | rpt_unit_economics |
+| Churn Risk Score | Customer Success | Daily | rpt_churn_risk |
