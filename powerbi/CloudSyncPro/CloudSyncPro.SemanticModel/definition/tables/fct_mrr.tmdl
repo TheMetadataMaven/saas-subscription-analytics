@@ -1,0 +1,192 @@
+table fct_mrr
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000001
+
+	measure MRR = CALCULATE(SUM(fct_mrr[ending_mrr]), LASTDATE(fct_mrr[month_date]))
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000001
+
+	measure ARR = [MRR] * 12
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000002
+
+	measure 'Net New MRR' = SUM(fct_mrr[net_new_mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000003
+
+	measure 'Net Revenue Retention %' = CALCULATE(AVERAGE(fct_mrr[nrr_pct]), LASTDATE(fct_mrr[month_date])) / 100
+		formatString: 0.0%
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000004
+
+	measure 'Quick Ratio' = CALCULATE(AVERAGE(fct_mrr[quick_ratio]), LASTDATE(fct_mrr[month_date]))
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000005
+
+	measure 'Active Customers' = CALCULATE(SUM(fct_mrr[active_customers]), LASTDATE(fct_mrr[month_date]))
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000006
+
+	measure ARPC = CALCULATE(AVERAGE(fct_mrr[arpc]), LASTDATE(fct_mrr[month_date]))
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000007
+
+	measure 'LTV : CAC' = CALCULATE(AVERAGE(rpt_unit_economics[ltv_to_cac_ratio]))
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000008
+
+	measure 'CAC Payback (months)' = CALCULATE(AVERAGE(rpt_unit_economics[cac_payback_months]))
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-000000000009
+
+	measure 'Acquisition ROI %' = CALCULATE(AVERAGE(rpt_unit_economics[acquisition_roi_pct])) / 100
+		formatString: 0.0%
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000a
+
+	measure CAC = CALCULATE(AVERAGE(rpt_unit_economics[cac]))
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000b
+
+	measure 'Customers At Risk' = CALCULATE(DISTINCTCOUNT(rpt_churn_risk[customer_id]), rpt_churn_risk[risk_band] IN {"high","critical"})
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000c
+
+	measure 'MRR At Risk' = SUM(rpt_churn_risk[mrr_at_risk])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000d
+
+	measure 'MRR (monthly)' = SUM(fct_mrr[ending_mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3000-4a5b-8c6d-00000000000e
+
+	column month_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: month_date
+		annotation SummarizationSetBy = Automatic
+
+	column month_key
+		dataType: string
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000002
+		summarizeBy: none
+		sourceColumn: month_key
+		annotation SummarizationSetBy = Automatic
+
+	column active_customers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000003
+		summarizeBy: sum
+		sourceColumn: active_customers
+		annotation SummarizationSetBy = Automatic
+
+	column new_customers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000004
+		summarizeBy: sum
+		sourceColumn: new_customers
+		annotation SummarizationSetBy = Automatic
+
+	column churned_customers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000005
+		summarizeBy: sum
+		sourceColumn: churned_customers
+		annotation SummarizationSetBy = Automatic
+
+	column ending_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000006
+		summarizeBy: sum
+		sourceColumn: ending_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column new_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000007
+		summarizeBy: sum
+		sourceColumn: new_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column expansion_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000008
+		summarizeBy: sum
+		sourceColumn: expansion_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column contraction_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-000000000009
+		summarizeBy: sum
+		sourceColumn: contraction_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column churned_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-00000000000a
+		summarizeBy: sum
+		sourceColumn: churned_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column net_new_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-00000000000b
+		summarizeBy: sum
+		sourceColumn: net_new_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column nrr_pct
+		dataType: double
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-00000000000c
+		summarizeBy: none
+		sourceColumn: nrr_pct
+		annotation SummarizationSetBy = Automatic
+
+	column quick_ratio
+		dataType: double
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-00000000000d
+		summarizeBy: none
+		sourceColumn: quick_ratio
+		annotation SummarizationSetBy = Automatic
+
+	column arpc
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-4000-4a5b-8c6d-00000000000e
+		summarizeBy: none
+		sourceColumn: arpc
+		annotation SummarizationSetBy = Automatic
+
+	partition fct_mrr = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\fct_mrr.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"month_date", type date},
+						{"month_key", type text},
+						{"active_customers", Int64.Type},
+						{"new_customers", Int64.Type},
+						{"churned_customers", Int64.Type},
+						{"ending_mrr", type number},
+						{"new_mrr", type number},
+						{"expansion_mrr", type number},
+						{"contraction_mrr", type number},
+						{"churned_mrr", type number},
+						{"net_new_mrr", type number},
+						{"nrr_pct", type number},
+						{"quick_ratio", type number},
+						{"arpc", type number}
+					})
+				in
+					Typed

@@ -1,0 +1,78 @@
+table rpt_cohort_retention
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000006
+
+	measure 'Avg Retention %' = AVERAGE(rpt_cohort_retention[retention_rate]) / 100
+		formatString: 0.0%
+		lineageTag: 9b1c2d3e-3300-4a5b-8c6d-000000000001
+
+	column cohort_month_key
+		dataType: string
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: cohort_month_key
+		annotation SummarizationSetBy = Automatic
+
+	column period_label
+		dataType: string
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000002
+		summarizeBy: none
+		sourceColumn: period_label
+		annotation SummarizationSetBy = Automatic
+
+	column months_since_signup
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000003
+		summarizeBy: none
+		sourceColumn: months_since_signup
+		annotation SummarizationSetBy = Automatic
+
+	column cohort_size
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000004
+		summarizeBy: sum
+		sourceColumn: cohort_size
+		annotation SummarizationSetBy = Automatic
+
+	column active_customers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000005
+		summarizeBy: sum
+		sourceColumn: active_customers
+		annotation SummarizationSetBy = Automatic
+
+	column retention_rate
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000006
+		summarizeBy: none
+		sourceColumn: retention_rate
+		annotation SummarizationSetBy = Automatic
+
+	column mrr_retention_from_m0
+		dataType: double
+		formatString: 0.0
+		lineageTag: 9b1c2d3e-7300-4a5b-8c6d-000000000007
+		summarizeBy: none
+		sourceColumn: mrr_retention_from_m0
+		annotation SummarizationSetBy = Automatic
+
+	partition rpt_cohort_retention = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\rpt_cohort_retention.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"cohort_month_key", type text},
+						{"period_label", type text},
+						{"months_since_signup", Int64.Type},
+						{"cohort_size", Int64.Type},
+						{"active_customers", Int64.Type},
+						{"retention_rate", type number},
+						{"mrr_retention_from_m0", type number}
+					})
+				in
+					Typed

@@ -54,12 +54,25 @@ saas-subscription-analytics/
 │       ├── fct_subscription_events.sql
 │       ├── dim_customers.sql
 │       ├── dim_subscriptions.sql
-│       └── rpt_cohort_retention.sql
+│       ├── rpt_cohort_retention.sql
+│       ├── rpt_unit_economics.sql      # CAC / LTV / payback / ROI by channel
+│       └── rpt_churn_risk.sql          # Churn-risk scorecard
 │
 ├── analysis/                         # Ad-hoc analysis queries
 │   ├── cohort_analysis.sql
 │   ├── churn_deep_dive.sql
-│   └── channel_attribution.sql
+│   ├── channel_attribution.sql
+│   ├── customer_lifecycle.sql
+│   ├── performance_analysis.sql
+│   ├── roi_analysis.sql
+│   └── market_analysis.sql
+│
+├── powerbi/                          # Power BI report package
+│   ├── dashboard_preview.html        # Interactive visual preview
+│   ├── measures.dax                  # Enterprise KPI measure library
+│   ├── report_spec.md                # 5-page build sheet
+│   ├── model_guide.md                # Connection + relationships
+│   └── README.md
 │
 ├── macros/                           # Reusable SQL macros
 │   └── saas_metrics.sql
@@ -67,7 +80,9 @@ saas-subscription-analytics/
 ├── tests/                            # Custom data quality tests
 │   ├── assert_mrr_movements_balance.sql
 │   ├── assert_cohort_retention_valid.sql
-│   └── assert_attribution_weights_sum_to_one.sql
+│   ├── assert_attribution_weights_sum_to_one.sql
+│   ├── assert_churn_risk_score_in_range.sql
+│   └── assert_unit_economics_valid.sql
 │
 ├── scripts/
 │   └── generate_sample_data.py       # Data generation script
@@ -117,6 +132,8 @@ saas-subscription-analytics/
 | `fct_mrr` | Fact | Monthly recurring revenue by customer, with MRR movements |
 | `fct_subscription_events` | Fact | Lifecycle events (started, upgraded, downgraded, churned) |
 | `rpt_cohort_retention` | Report | Pre-aggregated cohort retention matrix |
+| `rpt_unit_economics` | Report | CAC, LTV, LTV:CAC, payback, and ROI by acquisition channel |
+| `rpt_churn_risk` | Report | Rules-based churn-risk scorecard for active customers |
 
 ---
 
@@ -236,16 +253,24 @@ FROM touchpoints
 
 ## 📈 Dashboards
 
-### Executive Dashboard (Power BI / Tableau / Looker)
+### Power BI Report
 
-Each dashboard includes:
+A complete build package lives in [`/powerbi`](/powerbi):
 
-1. **MRR Overview** — Current MRR, trend, and waterfall of movements
-2. **Cohort Retention Heatmap** — Visual retention matrix by signup month
-3. **Channel Performance** — CAC, conversion rates, and LTV by acquisition source
-4. **Churn Analysis** — Churn by plan tier, tenure, and leading indicators
+- **[`dashboard_preview.html`](/powerbi/dashboard_preview.html)** — open in a browser for an interactive preview of the Executive Overview page
+- **[`measures.dax`](/powerbi/measures.dax)** — full DAX library for every enterprise KPI
+- **[`report_spec.md`](/powerbi/report_spec.md)** — page-by-page build sheet (5 pages)
+- **[`model_guide.md`](/powerbi/model_guide.md)** — BigQuery connection + star-schema relationships
 
-Screenshots and interactive demos available in `/dashboards` folder.
+The report spans five pages:
+
+1. **Executive Overview** — MRR/ARR, NRR, Quick Ratio, MRR trend & movement waterfall
+2. **Customer Lifecycle** — funnel, trial conversion, time-to-value, tenure survival
+3. **Unit Economics & ROI** — LTV:CAC, CAC payback, ROI, channel scorecard
+4. **Market & Segments** — industry/size/geo concentration, ARPU, whitespace
+5. **Churn & Retention** — risk distribution, MRR at risk, cohort heatmap
+
+The visuals bind to the dbt marts via the DAX measures, so they refresh with each `dbt run`.
 
 ---
 
@@ -343,9 +368,12 @@ make fresh          # Clean rebuild everything
 
 ## 🔮 Future Enhancements
 
-- [ ] Add dbt tests for data quality
+- [x] Add dbt tests for data quality (schema + custom integrity tests)
+- [x] Churn-risk scoring model (`rpt_churn_risk`) — rules-based leading indicators
+- [x] Unit economics: CAC / LTV / payback / ROI by channel (`rpt_unit_economics`)
+- [x] Power BI report package (DAX measures, spec, interactive preview)
 - [ ] Implement incremental loading patterns
-- [ ] Build predictive churn model (Python)
+- [ ] Upgrade churn scoring to a trained Python model (cohort survival curves)
 - [ ] Add Metabase dashboard variant
 
 ---

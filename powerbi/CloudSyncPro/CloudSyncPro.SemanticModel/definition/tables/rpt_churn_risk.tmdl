@@ -1,0 +1,68 @@
+table rpt_churn_risk
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000003
+
+	measure 'Customer Count' = COUNTROWS(rpt_churn_risk)
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3500-4a5b-8c6d-000000000001
+
+	column customer_id
+		dataType: string
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: customer_id
+		annotation SummarizationSetBy = Automatic
+
+	column company_name
+		dataType: string
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000002
+		summarizeBy: none
+		sourceColumn: company_name
+		annotation SummarizationSetBy = Automatic
+
+	column risk_band
+		dataType: string
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000003
+		summarizeBy: none
+		sourceColumn: risk_band
+		annotation SummarizationSetBy = Automatic
+
+	column churn_risk_score
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000004
+		summarizeBy: none
+		sourceColumn: churn_risk_score
+		annotation SummarizationSetBy = Automatic
+
+	column current_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000005
+		summarizeBy: sum
+		sourceColumn: current_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column mrr_at_risk
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-6000-4a5b-8c6d-000000000006
+		summarizeBy: sum
+		sourceColumn: mrr_at_risk
+		annotation SummarizationSetBy = Automatic
+
+	partition rpt_churn_risk = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\rpt_churn_risk.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"customer_id", type text},
+						{"company_name", type text},
+						{"risk_band", type text},
+						{"churn_risk_score", Int64.Type},
+						{"current_mrr", type number},
+						{"mrr_at_risk", type number}
+					})
+				in
+					Typed

@@ -1,0 +1,123 @@
+table dim_customers
+	lineageTag: 9b1c2d3e-2000-4a5b-8c6d-000000000004
+
+	measure 'Total MRR' = SUM(dim_customers[current_mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3100-4a5b-8c6d-000000000001
+
+	measure ARPU = AVERAGE(dim_customers[current_mrr])
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-3100-4a5b-8c6d-000000000002
+
+	measure 'Total Customers' = COUNTROWS(dim_customers)
+		formatString: #,0
+		lineageTag: 9b1c2d3e-3100-4a5b-8c6d-000000000003
+
+	column customer_id
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000001
+		summarizeBy: none
+		sourceColumn: customer_id
+		annotation SummarizationSetBy = Automatic
+
+	column company_name
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000002
+		summarizeBy: none
+		sourceColumn: company_name
+		annotation SummarizationSetBy = Automatic
+
+	column industry
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000003
+		summarizeBy: none
+		sourceColumn: industry
+		annotation SummarizationSetBy = Automatic
+
+	column company_size
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000004
+		summarizeBy: none
+		sourceColumn: company_size
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000005
+		summarizeBy: none
+		sourceColumn: country
+		annotation SummarizationSetBy = Automatic
+
+	column acquisition_channel
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000006
+		summarizeBy: none
+		sourceColumn: acquisition_channel
+		annotation SummarizationSetBy = Automatic
+
+	column current_plan_tier
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000007
+		summarizeBy: none
+		sourceColumn: current_plan_tier
+		annotation SummarizationSetBy = Automatic
+
+	column customer_status
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000008
+		summarizeBy: none
+		sourceColumn: customer_status
+		annotation SummarizationSetBy = Automatic
+
+	column current_mrr
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-000000000009
+		summarizeBy: sum
+		sourceColumn: current_mrr
+		annotation SummarizationSetBy = Automatic
+
+	column lifetime_revenue
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-00000000000a
+		summarizeBy: sum
+		sourceColumn: lifetime_revenue
+		annotation SummarizationSetBy = Automatic
+
+	column health_status
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-00000000000b
+		summarizeBy: none
+		sourceColumn: health_status
+		annotation SummarizationSetBy = Automatic
+
+	column signup_cohort_month
+		dataType: string
+		lineageTag: 9b1c2d3e-7100-4a5b-8c6d-00000000000c
+		summarizeBy: none
+		sourceColumn: signup_cohort_month
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customers = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "\dim_customers.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+					Typed = Table.TransformColumnTypes(Promoted, {
+						{"customer_id", type text},
+						{"company_name", type text},
+						{"industry", type text},
+						{"company_size", type text},
+						{"country", type text},
+						{"acquisition_channel", type text},
+						{"current_plan_tier", type text},
+						{"customer_status", type text},
+						{"current_mrr", type number},
+						{"lifetime_revenue", type number},
+						{"health_status", type text},
+						{"signup_cohort_month", type text}
+					})
+				in
+					Typed

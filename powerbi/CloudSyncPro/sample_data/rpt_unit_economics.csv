@@ -1,0 +1,11 @@
+acquisition_channel,customers_acquired,cac,realized_ltv,predicted_ltv,ltv_to_cac_ratio,cac_payback_months,acquisition_roi_pct,total_acquisition_spend,total_lifetime_revenue,churn_rate_pct
+direct,60,10,98,110,9.8,1.4,880,600,5880,8
+organic_search,140,15,121.5,135,8.1,2.1,710,2100,17010,12
+referral,55,25,160,175,6.4,3.0,540,1375,8800,14
+email_campaign,70,20,114,128,5.7,2.6,470,1400,7980,18
+content_marketing,95,35,171.5,188,4.9,4.2,390,3325,16292.5,22
+partner,40,45,162,175,3.6,5.1,260,1800,6480,28
+webinar,30,55,154,165,2.8,7.8,180,1650,4620,30
+facebook_ads,80,65,156,168,2.4,8.9,140,5200,12480,35
+google_ads,120,85,161.5,172,1.9,11.4,90,10200,19380,40
+linkedin_ads,25,120,156,160,1.3,16.2,30,3000,3900,48

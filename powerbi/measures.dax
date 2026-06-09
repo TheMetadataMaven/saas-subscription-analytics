@@ -1,0 +1,241 @@
+// =============================================================================
+// CloudSync Pro — Power BI DAX Measure Library
+// =============================================================================
+// Paste these into a Power BI model connected to the dbt marts
+// (fct_mrr, dim_customers, dim_subscriptions, rpt_unit_economics,
+//  rpt_cohort_retention, rpt_churn_risk). Group them into a dedicated
+// "_Measures" table. Naming uses a [KPI] prefix-free convention; adjust
+// table references if your model names tables differently.
+//
+// Conventions:
+//   - "Selected month" measures use the last date in context (LASTDATE)
+//   - Currency measures format as $#,0; percentages as 0.0%
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 1. RECURRING REVENUE (MRR / ARR)
+// -----------------------------------------------------------------------------
+
+MRR =
+CALCULATE ( SUM ( fct_mrr[ending_mrr] ), LASTDATE ( fct_mrr[month_date] ) )
+
+ARR = [MRR] * 12
+
+Active MRR =
+CALCULATE ( SUM ( fct_mrr[active_mrr] ), LASTDATE ( fct_mrr[month_date] ) )
+
+New MRR = CALCULATE ( SUM ( fct_mrr[new_mrr] ) )
+
+Expansion MRR = CALCULATE ( SUM ( fct_mrr[expansion_mrr] ) )
+
+Contraction MRR = CALCULATE ( SUM ( fct_mrr[contraction_mrr] ) )
+
+Churned MRR = CALCULATE ( SUM ( fct_mrr[churned_mrr] ) )
+
+Net New MRR = [New MRR] + [Expansion MRR] - [Contraction MRR] - [Churned MRR]
+
+Gross New MRR = [New MRR] + [Expansion MRR]
+
+Gross Lost MRR = [Contraction MRR] + [Churned MRR]
+
+// Month-over-month MRR growth
+MRR MoM % =
+VAR CurrentMRR = [MRR]
+VAR PriorMRR =
+    CALCULATE ( SUM ( fct_mrr[ending_mrr] ),
+        PREVIOUSMONTH ( fct_mrr[month_date] ) )
+RETURN DIVIDE ( CurrentMRR - PriorMRR, PriorMRR )
+
+// Annualized run-rate growth (last 1 month annualized)
+MRR Annualized Growth % = POWER ( 1 + [MRR MoM %], 12 ) - 1
+
+
+// -----------------------------------------------------------------------------
+// 2. RETENTION QUALITY (NRR / GRR / CHURN)
+// -----------------------------------------------------------------------------
+
+Beginning MRR =
+CALCULATE ( SUM ( fct_mrr[ending_mrr] ), PREVIOUSMONTH ( fct_mrr[month_date] ) )
+
+// Net Revenue Retention: (begin + expansion - contraction - churn) / begin
+Net Revenue Retention % =
+DIVIDE (
+    [Beginning MRR] + [Expansion MRR] - [Contraction MRR] - [Churned MRR],
+    [Beginning MRR]
+)
+
+// Gross Revenue Retention: (begin - contraction - churn) / begin
+Gross Revenue Retention % =
+DIVIDE (
+    [Beginning MRR] - [Contraction MRR] - [Churned MRR],
+    [Beginning MRR]
+)
+
+Gross MRR Churn % = DIVIDE ( [Churned MRR], [Beginning MRR] )
+
+// Logo (customer) churn for the selected month
+Logo Churn % =
+VAR Churned = CALCULATE ( SUM ( fct_mrr[churned_customers] ) )
+VAR Base =
+    CALCULATE ( SUM ( fct_mrr[active_customers] ),
+        PREVIOUSMONTH ( fct_mrr[month_date] ) )
+RETURN DIVIDE ( Churned, Base )
+
+// Quick Ratio = growth MRR / lost MRR
+Quick Ratio = DIVIDE ( [Gross New MRR], [Gross Lost MRR] )
+
+
+// -----------------------------------------------------------------------------
+// 3. CUSTOMER METRICS
+// -----------------------------------------------------------------------------
+
+Active Customers =
+CALCULATE ( SUM ( fct_mrr[active_customers] ), LASTDATE ( fct_mrr[month_date] ) )
+
+New Customers = CALCULATE ( SUM ( fct_mrr[new_customers] ) )
+
+Churned Customers = CALCULATE ( SUM ( fct_mrr[churned_customers] ) )
+
+// Average Revenue Per Customer / Account
+ARPC = DIVIDE ( [Active MRR], [Active Customers] )
+
+ARPA Annual = [ARPC] * 12
+
+Total Customers = DISTINCTCOUNT ( dim_customers[customer_id] )
+
+Paying Customers =
+CALCULATE (
+    DISTINCTCOUNT ( dim_customers[customer_id] ),
+    dim_customers[customer_status] = "active_paying"
+)
+
+
+// -----------------------------------------------------------------------------
+// 4. UNIT ECONOMICS (CAC / LTV / PAYBACK / ROI)
+// -----------------------------------------------------------------------------
+// Sourced from rpt_unit_economics (channel grain + blended row).
+// Exclude the 'ALL CHANNELS' row when slicing by channel.
+
+CAC =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[cac] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+Realized LTV =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[realized_ltv] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+Predicted LTV =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[predicted_ltv] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+LTV : CAC =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[ltv_to_cac_ratio] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+CAC Payback (months) =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[cac_payback_months] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+Acquisition ROI % =
+CALCULATE (
+    AVERAGE ( rpt_unit_economics[acquisition_roi_pct] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+) / 100
+
+Total Acquisition Spend =
+CALCULATE (
+    SUM ( rpt_unit_economics[total_acquisition_spend] ),
+    rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS"
+)
+
+Revenue per Spend $ =
+DIVIDE (
+    CALCULATE ( SUM ( rpt_unit_economics[total_lifetime_revenue] ),
+        rpt_unit_economics[acquisition_channel] <> "ALL CHANNELS" ),
+    [Total Acquisition Spend]
+)
+
+
+// -----------------------------------------------------------------------------
+// 5. EFFICIENCY / BOARD METRICS
+// -----------------------------------------------------------------------------
+
+// Rule of 40: growth% + profit-margin proxy. Replace the margin proxy
+// with a real gross/operating margin measure when cost data is available.
+Rule of 40 Proxy = [MRR MoM %] * 12 + ( [Net Revenue Retention %] - 1 )
+
+// Magic Number = net new ARR from a period / prior-period S&M spend.
+// Uses acquisition spend as the S&M proxy.
+Magic Number =
+VAR NetNewARR = [Net New MRR] * 12
+RETURN DIVIDE ( NetNewARR, [Total Acquisition Spend] )
+
+Burn Multiple Proxy = DIVIDE ( [Total Acquisition Spend], [Net New MRR] * 12 )
+
+
+// -----------------------------------------------------------------------------
+// 6. CHURN RISK (from rpt_churn_risk)
+// -----------------------------------------------------------------------------
+
+Avg Churn Risk Score = AVERAGE ( rpt_churn_risk[churn_risk_score] )
+
+Customers At Risk =
+CALCULATE (
+    DISTINCTCOUNT ( rpt_churn_risk[customer_id] ),
+    rpt_churn_risk[risk_band] IN { "high", "critical" }
+)
+
+MRR At Risk = SUM ( rpt_churn_risk[mrr_at_risk] )
+
+% MRR At Risk = DIVIDE ( [MRR At Risk], [MRR] )
+
+
+// -----------------------------------------------------------------------------
+// 7. COHORT RETENTION (from rpt_cohort_retention)
+// -----------------------------------------------------------------------------
+
+Cohort Retention % = AVERAGE ( rpt_cohort_retention[retention_rate] ) / 100
+
+Cohort MRR Retention % = AVERAGE ( rpt_cohort_retention[mrr_retention_from_m0] ) / 100
+
+Cohort Size = SUM ( rpt_cohort_retention[cohort_size] )
+
+
+// -----------------------------------------------------------------------------
+// 8. KPI STATUS HELPERS (for conditional formatting / KPI cards)
+// -----------------------------------------------------------------------------
+
+NRR Status =
+SWITCH (
+    TRUE (),
+    [Net Revenue Retention %] >= 1.20, "Excellent",
+    [Net Revenue Retention %] >= 1.00, "Good",
+    "Needs attention"
+)
+
+LTV:CAC Status =
+SWITCH (
+    TRUE (),
+    [LTV : CAC] >= 3, "Healthy",
+    [LTV : CAC] >= 1, "Marginal",
+    "Unprofitable"
+)
+
+Payback Status =
+SWITCH (
+    TRUE (),
+    [CAC Payback (months)] <= 12, "Excellent",
+    [CAC Payback (months)] <= 18, "Good",
+    "Concerning"
+)

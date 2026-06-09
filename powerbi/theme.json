@@ -1,0 +1,46 @@
+{
+  "name": "CloudSync Pro — CVD-Safe Dark",
+  "$schema": "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.116.json",
+  "_comment": "Color-blind-safe palette. Sentiment is blue (good) / orange (bad) rather than green/red, so it is legible for red-green color vision deficiency (~8% of men). Severity also varies in lightness to survive grayscale. Always pair color with a second cue (icon, arrow, data label).",
+
+  "dataColors": [
+    "#2dd4bf",
+    "#56b4e9",
+    "#e69f00",
+    "#f0e442",
+    "#d55e00",
+    "#0072b2",
+    "#009e73",
+    "#cc79a7"
+  ],
+
+  "good": "#56b4e9",
+  "neutral": "#f0e442",
+  "bad": "#e69f00",
+  "maximum": "#0072b2",
+  "center": "#94a3b8",
+  "minimum": "#e2e8f0",
+  "null": "#475569",
+
+  "background": "#0f172a",
+  "secondaryBackground": "#1e293b",
+  "foreground": "#e2e8f0",
+  "tableAccent": "#2dd4bf",
+
+  "textClasses": {
+    "title":    { "fontFace": "Segoe UI Semibold", "color": "#e2e8f0", "fontSize": 14 },
+    "header":   { "fontFace": "Segoe UI Semibold", "color": "#e2e8f0", "fontSize": 12 },
+    "label":    { "fontFace": "Segoe UI", "color": "#94a3b8", "fontSize": 10 },
+    "callout":  { "fontFace": "Segoe UI", "color": "#e2e8f0", "fontSize": 26 }
+  },
+
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background":   [{ "show": true, "color": { "solid": { "color": "#1e293b" } }, "transparency": 0 }],
+        "border":       [{ "show": true, "color": { "solid": { "color": "#334155" } }, "radius": 12 }],
+        "outspacePane": [{ "backgroundColor": { "solid": { "color": "#0f172a" } } }]
+      }
+    }
+  }
+}

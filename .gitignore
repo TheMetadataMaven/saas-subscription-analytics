@@ -1,0 +1,15 @@
+# Excel temporary / owner-lock files
+~$*
+
+# Power BI Project local cache (PBIP)
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Python
+__pycache__/
+*.pyc
+
+# dbt
+target/
+dbt_packages/
+logs/

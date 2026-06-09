@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "CloudSyncPro"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "9b1c2d3e-0002-4a5b-8c6d-000000000001"
+  }
+}
